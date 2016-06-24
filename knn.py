@@ -26,6 +26,8 @@ def knn(training,label,sample,k):
 	for c in range(class_num-1):                                          #检查样本数据是否均衡，不均衡的训练样本会造成结果的偏差
 		if label_num[c] != label_num[c+1]:
 			print "WARNING: 样本数据不均衡\n"
+			print 'class NO.1 amount: '+str(label_num[c])
+			print 'class NO.2 amount: '+str(label_num[c+1])
 			break
 	if c_t != c_s or r_t != label_shape[0]:                               #样本数据和训练集数据列长不一致，或标签数与训练样本数不一致，报错
 		raise Exception

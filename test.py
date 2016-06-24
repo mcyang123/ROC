@@ -4,7 +4,7 @@ import numpy
 import matplotlib
 
 data = []
-f = open(r'E:\mike\project\lab\ROC\code\DRD.txt','r')
+f = open(r'DRD.txt','r')
 for s in f :
 	d = s.split(',')
 	d = [float(d2) for d2 in d]
@@ -18,7 +18,7 @@ tra = data[0:t_n,0:-1]
 sam = data[t_n:,0:-1]
 lab = data[0:t_n,-1]
 true = numpy.array(data[t_n:,-1])
-k = 20
+k = 21
 result,label = knn.knn(tra,lab,sam,k)
 
 label = numpy.array(label)
