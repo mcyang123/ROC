@@ -2,21 +2,10 @@ function [] = train( k,varargin)
 %用knn对数据集进行分类，统计频数分布，画出ROC，计算AUC
 %输入为数据集名称
 
-if nargin == 2 
-    if varargin{1}(end-2:end) =='txt'
-        data = importdata( varargin{1} );                                             %读取数据
-    else
-        error('数据集输入错误')
-    end
-elseif nargin == 1
-    try
-        load('data_output.mat');
-    catch
-        generate_multi_sample(2,100,100);
-        load('data_output.mat');
-    end
-else
-    error('数据集输入错误')
+if nargin == 1 & varargin{1}(end-3:end) =='txt'
+    data = importdata( filename );                                             %读取数据
+elseif filename(end-3:end) =='mat'
+    load('data_output.mat');
 end
 tra = data(:,1:end-1);
 sam = tra;
@@ -38,31 +27,22 @@ if k>0 & k<length(label)                                                   %研究
             end
         end
         stem(x,y,color(i))                                                 %画统计图
-        xlabel('概率')
-        ylabel('数量')
     end
     %---------------------end------------------------
     
     %--------------------画ROC，计算AUC--------------
-    [AUC,FPR,TPR] = ROC_AUC(p,label_list,label,k);
-    AUC
+    [AUC,FPR,TPR] = ROC_AUC(p,label_list,label,k)
     figure
     plot(FPR,TPR)
-    xlabel('假正例率')
-    ylabel('真正例率')
     %----------------------end---------------------
     
 elseif k == -1
     AUC_list = [];
-    k_list = 1:length(label);
-    for k = k_list                                                         %遍历每一个k值，求AUC，画图
+    for k = 1:length(label)                                                %遍历每一个k值，求AUC，画图
         [p,label_list] = knn_for_ROC(tra,label,sam,k);
         AUC_list = [AUC_list,ROC_AUC(p,label_list,label,k)];
     end
-    figure
-    plot(k_list,AUC_list)
-    xlabel('k')
-    ylabel('AUC')
+    plot(k,AUC_list)
 else
     error('k不合法')
 end
