@@ -12,7 +12,7 @@ if c_l >1
     error('输入的标签向量不合法！');
 elseif c_t ~= c_s 
     error('训练集合样本集列数不一致！');
-elseif k<1 | k > r_t
+elseif k<1 || k > r_t
     error('k值不能小于1！')
 else
 %----------------end-------------------------
