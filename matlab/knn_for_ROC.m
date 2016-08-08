@@ -4,12 +4,13 @@ function [probability,label_list] = knn_for_ROC(training,label,sample,k)
 %（k）计算每个样本值k阶最近邻中，每个分类的组成占比，返回每一个样本点k领域里，各
 %个类的占比以及对应的标签列表
 
+label = label(:);
 %---------------作输入合法性检查-------------------
 [r_t,c_t] = size(training);
 [r_s,c_s] = size(sample);
 [~,c_l] = size(label);
 if c_l >1
-    error('输入的标签向量不合法！');
+    error('输入的标签向量不合法！');  
 elseif c_t ~= c_s 
     error('训练集合样本集列数不一致！');
 elseif k<1 || k > r_t

@@ -8,7 +8,7 @@ if nargin == 1                                                             %Ö»Êä
     try
         load('data_output.mat');
     catch
-        %generate_multi_sample(2,100,100);
+        generate_multi_sample(2,100,100);
         load('data_output.mat');
     end
     [tra,sam,label,label_true] = data_split(data,'hold_out_10');
@@ -48,44 +48,39 @@ if k>0 && k<length(label)                                                   %ÑÐ¾
     figure
     hold on
     color = ['r','g','b','k'];
-    X = cell(1,2);
-    for i = 1:length(label_list)                                           %
-        x_temp = sort(p(label_true == label_list(i),find(label_list == label_list(i))));                        %ÌáÈ¡µÚiÀàÊý¾Ý£¬¶ÔÆä¸ÅÂÊ½øÐÐÅÅÐò
-        y = [length(find(x_temp == x_temp(1)))];                           %³õÊ¼»¯yÖáÊý¾Ý£¬¼´¸ÅÂÊ¶ÔÓ¦µÄÊýÁ¿
-        x = [x_temp(1)];                                                   %³õÊ¼»¯xÖáÊý¾Ý£¬¼´¸ÅÂÊ
-        for j = 2:length(x_temp)                             
-            if x_temp(j) ~= x_temp(j-1)                                    %ÖØ¸´µÄ¸ÅÂÊÖµ²»ÔÙÀÛ¼Ó
-                y = [y,length(find(x_temp == x_temp(j)))];                 %Í³¼Æµ±Ç°¸ÅÂÊÊýÁ¿
-                x = [x,x_temp(j)];
+    for j = 1:length(label_list)    
+        p_temp =sort(p(label_true == label_list(j),1))
+        x = [p_temp(1)];
+        y = [length(find(p_temp(1) == p_temp))];
+        for i = 2:length(p_temp)
+            if length(find(p_temp(i) == x)) == 0     %ÓëÇ°ÃæµÄ²»ÖØ¸´£¬ÐèÒªÈë¶ÔÁÐ
+                x = [x,p_temp(i)];
+                y = [y,length( find( p_temp == p_temp(i) ) )];
             end
         end
-        stem(x,y,color(i))                                                 %»­Í³¼ÆÍ¼
-        xlabel('¸ÅÂÊ')
-        ylabel('ÊýÁ¿')
-        X{i} = y;
-        
+        stem(x,y,color(j))                                                 %»­Í³¼ÆÍ¼
     end
+    hold off 
+    xlabel('¸ÅÂÊ')
+    ylabel('ÊýÁ¿')
     %---------------------end------------------------
     
     %--------------------»­ROC£¬¼ÆËãAUC--------------
     [AUC,FPR,TPR] = ROC_AUC(p,label_list,label_true);
     AUC
-    [a1,b] = discreteVarLAST2(p(label_true == label_list(1),find(label_list == label_list(1))),p(label_true == label_list(2),find(label_list == label_list(2))));
-    [a2,b] = discreteVarLAST2(p(label_true == label_list(2),find(label_list == label_list(2))),p(label_true == label_list(1),find(label_list == label_list(1))));
-    a1
-    a2
+    AUC_fast(p(label_true == label_list(1),1),p(label_true == label_list(2),1))
     figure
     plot(FPR,TPR)
     xlabel('¼ÙÕýÀýÂÊ')
     ylabel('ÕæÕýÀýÂÊ')
     %----------------------end---------------------
     
-elseif k == -1
+elseif k == -1                                                             %±éÀúÃ¿Ò»¸ökÖµ£¬ÇóAUC£¬»­Í¼
     AUC_list = [];
     k_list = 1:length(label);
-    for k = k_list                                                         %±éÀúÃ¿Ò»¸ökÖµ£¬ÇóAUC£¬»­Í¼
+    for k = k_list                                                         
         [p,label_list] = knn_for_ROC(tra,label,sam,k);
-        AUC = ROC_AUC(p,label_list,label_true);
+        AUC = AUC_fast(p(label_true == label_list(1),1),p(label_true == label_list(2),1));
         AUC_list = [AUC_list,AUC];
     end
     figure
